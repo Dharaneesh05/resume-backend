@@ -17,9 +17,11 @@ import base64
 from collections import Counter
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['SECRET_KEY'] = 'your-secret-key'
-CORS(app)
+app.config['UPLOAD_FOLDER'] = os.path.join('/data', 'uploads')  # Use persistent disk
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24))
+# CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "https://your-frontend-domain.com"}})
 
 resume_analyzer = ResumeAnalyzer()  
 resume_builder = ResumeBuilder()    
@@ -400,4 +402,5 @@ def export_excel():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5000, use_reloader=False)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
