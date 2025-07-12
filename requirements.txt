@@ -1,4 +1,5 @@
 flask
+flask-cors
 streamlit
 streamlit-option-menu
 python-docx
