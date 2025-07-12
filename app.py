@@ -16,12 +16,10 @@ from feedback.feedback import FeedbackManager
 import base64
 from collections import Counter
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 app.config['UPLOAD_FOLDER'] = 'uploads'
-# app.config['UPLOAD_FOLDER'] = os.path.join('/data', 'uploads')  # Use persistent disk
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24))
-# CORS(app)
-CORS(app, resources={r"/api/*": {"origins": "https://your-frontend-domain.com"}})
+app.config['SECRET_KEY'] = 'your-secret-key'
+CORS(app)
 
 resume_analyzer = ResumeAnalyzer()  
 resume_builder = ResumeBuilder()    
@@ -29,8 +27,8 @@ dashboard_manager = DashboardManager()
 feedback_manager = FeedbackManager()
 job_roles = JOB_ROLES
 init_database(app)
-# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 def load_image(image_name):
     """Load image from static directory"""
     try:
@@ -402,5 +400,4 @@ def export_excel():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+    app.run(debug=True, host='127.0.0.1', port=5000, use_reloader=False)
