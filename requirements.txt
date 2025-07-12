@@ -1,3 +1,4 @@
+flask
 streamlit
 streamlit-option-menu
 python-docx
