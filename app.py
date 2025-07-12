@@ -17,8 +17,8 @@ import base64
 from collections import Counter
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = os.path.join('/data', 'uploads')  # Use persistent disk
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+# app.config['UPLOAD_FOLDER'] = os.path.join('/data', 'uploads')  # Use persistent disk
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24))
 # CORS(app)
 CORS(app, resources={r"/api/*": {"origins": "https://your-frontend-domain.com"}})
@@ -29,8 +29,8 @@ dashboard_manager = DashboardManager()
 feedback_manager = FeedbackManager()
 job_roles = JOB_ROLES
 init_database(app)
+# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
 def load_image(image_name):
     """Load image from static directory"""
     try:
