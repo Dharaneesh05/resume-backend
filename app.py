@@ -20,7 +20,8 @@ app = Flask(__name__, template_folder='../frontend/templates', static_folder='..
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SECRET_KEY'] = 'your-secret-key'
 # CORS(app)
-CORS(app, resources={r"/get_role_info": {"origins": "https://resume-frontend3.vercel.app"}})
+CORS(app, resources={r"/builder": {"origins": "https://resume-frontend3.vercel.app"},
+                    r"/analyzer": {"origins": "https://resume-frontend3.vercel.app"}}
 
 resume_analyzer = ResumeAnalyzer()  
 resume_builder = ResumeBuilder()    
