@@ -19,7 +19,8 @@ from collections import Counter
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SECRET_KEY'] = 'your-secret-key'
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/get_role_info": {"origins": "https://resume-frontend3.vercel.app"}})
 
 resume_analyzer = ResumeAnalyzer()  
 resume_builder = ResumeBuilder()    
