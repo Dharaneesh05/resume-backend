@@ -16,7 +16,7 @@ from feedback.feedback import FeedbackManager
 import base64
 from collections import Counter
 
-app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
+app = Flask(__name__, template_folder='frontend/templates', static_folder='frontend/static')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SECRET_KEY'] = 'your-secret-key'
 CORS(app, resources={
@@ -54,7 +54,7 @@ CATEGORY_MAPPING = {
 @app.route('/')
 def home():
     session['page'] = 'home'
-    return render_template('index.html', session=session)
+    return jsonify({'message': 'Welcome to the Resume Analyzer API'}), 200
 
 @app.route('/analyzer', methods=['GET', 'POST'])
 def analyzer_route(): 
@@ -419,5 +419,5 @@ def export_excel():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 10000))  # Updated to match Render's port
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
