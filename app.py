@@ -44,6 +44,13 @@ def load_image(image_name):
         print(f"Error loading image {image_name}: {e}")
         return None
 
+# Category mapping to align frontend with backend JOB_ROLES
+CATEGORY_MAPPING = {
+    'Frontend': 'Software Development and Engineering',
+    'Backend': 'Software Development and Engineering',
+    'Full Stack': 'Software Development and Engineering'
+}
+
 @app.route('/')
 def home():
     session['page'] = 'home'
@@ -82,10 +89,12 @@ def analyzer_route():
             if not text.strip():
                 return jsonify({'status': 'error', 'message': 'No text extracted from the resume. Please ensure the file is not empty.'}), 400
 
-            if category not in job_roles or role not in job_roles[category]:
-                return jsonify({'status': 'error', 'message': 'Invalid category or role selected.'}), 400
+            # Map frontend category to backend category
+            mapped_category = CATEGORY_MAPPING.get(category, category)
+            if mapped_category not in job_roles or role not in job_roles.get(mapped_category, {}):
+                return jsonify({'status': 'error', 'message': f'Invalid category "{category}" or role "{role}" selected. Available categories: {list(job_roles.keys())}'}), 400
 
-            role_info = job_roles[category][role]
+            role_info = job_roles[mapped_category][role]
             analysis = resume_analyzer.analyze_resume({'raw_text': text}, role_info)
 
             resume_data = {
@@ -99,7 +108,7 @@ def analyzer_route():
                 },
                 'summary': analysis.get('summary', ''),
                 'target_role': role,
-                'target_category': category,
+                'target_category': mapped_category,  # Store the mapped category
                 'education': analysis.get('education', []),
                 'experience': analysis.get('experience', []),
                 'projects': analysis.get('projects', []),
@@ -132,8 +141,10 @@ def analyzer_route():
 @app.route('/get_roles')
 def get_roles():
     category = request.args.get('category')
-    if category in job_roles:
-        roles = list(job_roles[category].keys())
+    # Map frontend category to backend category
+    mapped_category = CATEGORY_MAPPING.get(category, category)
+    if mapped_category in job_roles:
+        roles = list(job_roles[mapped_category].keys())
         return jsonify({'roles': roles})
     return jsonify({'roles': []})
 
@@ -141,8 +152,10 @@ def get_roles():
 def get_role_info():
     category = request.args.get('category')
     role = request.args.get('role')
-    if category in job_roles and role in job_roles[category]:
-        return jsonify(job_roles[category][role])
+    # Map frontend category to backend category
+    mapped_category = CATEGORY_MAPPING.get(category, category)
+    if mapped_category in job_roles and role in job_roles[mapped_category]:
+        return jsonify(job_roles[mapped_category][role])
     return jsonify({'description': '', 'required_skills': []})
 
 @app.route('/builder', methods=['GET', 'POST'])
