@@ -19,9 +19,10 @@ from collections import Counter
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SECRET_KEY'] = 'your-secret-key'
-# CORS(app)
-CORS(app, resources={r"/builder": {"origins": "https://resume-frontend3.vercel.app"},
-                    r"/analyzer": {"origins": "https://resume-frontend3.vercel.app"}}
+CORS(app, resources={
+    r"/builder": {"origins": "https://resume-frontend3.vercel.app"},
+    r"/analyzer": {"origins": "https://resume-frontend3.vercel.app"}
+})
 
 resume_analyzer = ResumeAnalyzer()  
 resume_builder = ResumeBuilder()    
@@ -53,15 +54,18 @@ def analyzer_route():
     session['page'] = 'analyzer'
     if request.method == 'POST':
         try:
+            # Handle FormData
             category = request.form.get('category')
             role = request.form.get('role')
             file = request.files.get('resume')
             
             if not file or not category or not role:
                 return jsonify({'status': 'error', 'message': 'Missing required fields: file, category, or role'}), 400
+            
             filename = secure_filename(file.filename)
             if not (filename.endswith('.pdf') or filename.endswith('.docx')):
                 return jsonify({'status': 'error', 'message': 'Unsupported file type. Please upload a PDF or DOCX file.'}), 400
+            
             text = ""
             if filename.endswith('.pdf'):
                 file.seek(0)
